@@ -18,7 +18,6 @@ namespace HenBot
                     break;
                 default:
                     return;
-
             }
         }
     }

@@ -12,7 +12,7 @@ namespace HenBot
             var savedUser = UserRepository.GetUser(chatId);
             if (savedUser.IsConfiguring)
             {
-                SettingsHandler.CompleteConfiguration(botClient, update, chatId, cancellationToken);
+                await SettingsHandler.CompleteConfiguration(botClient, update, chatId, cancellationToken);
             }
             if (savedUser.IsAyaya)
             {

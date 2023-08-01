@@ -27,7 +27,7 @@ namespace HenBot
             }
             if (savedUser.IsConfiguring)
             {
-                SettingsHandler.CompleteConfiguration(botClient, update, chatId, cancellationToken);
+                await SettingsHandler.CompleteConfiguration(botClient, update, chatId, cancellationToken);
             }
             switch (messageText)
             {

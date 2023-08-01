@@ -37,7 +37,7 @@ namespace HenBot
         {
             await botClient.SendMediaGroupAsync(
                                                 chatId: chatId,
-                                                media: await HttpRequseter.SendRequest(savedUser.Limit, tags, savedUser.SettedRating, savedUser.Page),
+                                                media: await AlbumInputMediaCreator.CreateAlbumInputMedia(savedUser.Limit, tags, savedUser.SettedRating, savedUser.Page),
                                                 cancellationToken: cancellationToken);
             savedUser.IsAyaya = false;
             savedUser.IsAyayaed = true;

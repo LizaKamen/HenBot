@@ -4,10 +4,16 @@ namespace HenBot
 {
     public class JsonDeserializer
     {
-        public static RequestObject Deserialize(string json)
+        public static PostObject DeserializePost(string json)
         {
-            var ros = JsonConvert.DeserializeObject<RequestObject>(json);
-            return ros;
+            var postObject = JsonConvert.DeserializeObject<PostObject>(json);
+            return postObject;
+        }
+
+        public static TagObject DeserializeTag(string json)
+        {
+            var tagObject = JsonConvert.DeserializeObject<TagObject>(json);
+            return tagObject;
         }
     }
 }

@@ -2,24 +2,20 @@
 
 namespace HenBot
 {
-    public class HttpRequseter
+    public class AlbumInputMediaCreator
     {
-        public static async Task<IAlbumInputMedia[]> SendRequest(int limit, string tags, Ratings rating, int page)
+        public static async Task<IAlbumInputMedia[]> CreateAlbumInputMedia(int limit, string tags, Ratings rating, int page)
         {
             var alwaysBannedTags = "+-animated";
             var request = $"https://gelbooru.com/index.php?page=dapi&s=post&q=index&limit={limit}&tags={GenerateExcludeTagsString(rating) + tags + alwaysBannedTags}&pid={page}&json=1";
-            using HttpClient client = new();
-            client.DefaultRequestHeaders.Accept.Clear();
-            client.DefaultRequestHeaders.Add("User-Agent", "HenBot");
-            var urls = await ProcessPostsAsync(client, request);
-            
-            
-            return CreateAlbumInputMedia(urls);
+            var urls = await ExtractUrlsFromRequest(request);
 
-            static async Task<List<string>> ProcessPostsAsync(HttpClient client, string request)
+            return CreateAlbumInputMediaFromUrls(urls);
+
+            async Task<List<string>> ExtractUrlsFromRequest(string request)
             {
-                var json = await client.GetStringAsync(request);
-                var postsList = JsonDeserializer.Deserialize(json);
+                var json = await HttpRequester.MakeRequest(request);
+                var postsList = JsonDeserializer.DeserializePost(json);
                 var urls = new List<string>(postsList.Post.Capacity);
                 foreach (var post in postsList.Post)
                 {
@@ -35,9 +31,9 @@ namespace HenBot
                 return urls;
             }
 
-            IAlbumInputMedia[] CreateAlbumInputMedia(List<string> urls)
+            IAlbumInputMedia[] CreateAlbumInputMediaFromUrls(List<string> urls)
             {
-                List<IAlbumInputMedia> AlbumInput = new List<IAlbumInputMedia>(urls.Count);
+                var AlbumInput = new List<IAlbumInputMedia>(urls.Count);
                 foreach (var url in urls)
                 {
                     AlbumInput.Add(new InputMediaPhoto(InputFile.FromUri(url)));

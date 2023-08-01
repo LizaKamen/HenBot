@@ -64,18 +64,33 @@ namespace HenBot
                     }
                     break;
                 case 2:
-                    savedUser.SavedTags = update.Message.Text.Split(' ').ToList();
-                    savedUser.Step++;
+                    var tagsToCheck = update.Message.Text.Split(' ').ToList();
+                    if (!await TagExistenceChecker.CheckIfTagsExist(tagsToCheck))
+                    {
+                        ChangeUserState();
+                        await botClient.SendTextMessageAsync(
+                            chatId,
+                            $"There was a problem with {TagExistenceChecker.wrongTag} tag. Try again with correct spelling",
+                            cancellationToken: cancellationToken);
+                        break;
+                    }
+                    
+                    savedUser.SavedTags = tagsToCheck;
                     await botClient.SendTextMessageAsync(chatId, $"Configuring ended here's your settings: {savedUser.Limit} pics per post, rating : {savedUser.SettedRating}, saved tags: later))", cancellationToken: cancellationToken);
-                    savedUser.IsConfiguring = false;
-                    savedUser.Step = 0;
+                    ChangeUserState();
                     break;
+
+                    void ChangeUserState()
+                    {
+                        savedUser.IsConfiguring = false;
+                        savedUser.Step = 0;
+                    }
                 default:
                     break;
             }
         }
 
-        static InlineKeyboardMarkup inlineKeyboard = new(new[]
+        static readonly InlineKeyboardMarkup inlineKeyboard = new(new[]
             {
                 // first row
                 new []

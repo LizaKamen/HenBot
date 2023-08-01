@@ -2,10 +2,10 @@
 
 namespace HenBot
 {
-    public record RequestObject
+    public record TagObject
     {
         [JsonProperty("@attributes")]
         public Attributes Attributes { get; set; }
-        public List<Post> Post { get; set; } 
+        public List<Tag> Tag { get; set; }
     }
 }
