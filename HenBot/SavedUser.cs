@@ -9,7 +9,7 @@
         public bool IsAyaya { get; set; } = false;
         public bool IsAyayaed { get; set; } = false;
         public string LastTag { get; set; }
-        public List<string> SavedTags { get; set; } = new List<string>() { " " };
-        public Ratings SettedRating { get; set; }
+        public List<string> SavedTags { get; set; } = new List<string>() { };
+        public Ratings SettedRating { get; set; } = Ratings.General;
     }
 }

@@ -7,12 +7,19 @@ namespace HenBot
     {
         public static async Task HandleAyaya(ITelegramBotClient botClient, long chatId, CancellationToken cancellationToken)
         {
+            var savedUser = UserRepository.GetUser(chatId);
             UserRepository.GetUser(chatId).IsAyaya = true;
-            await botClient.SendTextMessageAsync(
-                chatId: chatId,
-                text: "Choose tag",
-                replyMarkup: CreateInlineKeyboard(UserRepository.GetUser(chatId)),
-                cancellationToken: cancellationToken);
+
+            if (savedUser.SavedTags.Count == 0)
+                await DoAyaya(botClient, "", chatId, savedUser, cancellationToken);
+            else
+            {
+                await botClient.SendTextMessageAsync(
+                    chatId: chatId,
+                    text: "Choose tag",
+                    replyMarkup: CreateInlineKeyboard(UserRepository.GetUser(chatId)),
+                    cancellationToken: cancellationToken);
+            }
         }
 
         static InlineKeyboardMarkup CreateInlineKeyboard(SavedUser savedUser)
