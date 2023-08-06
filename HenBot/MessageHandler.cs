@@ -28,6 +28,7 @@ namespace HenBot
             if (savedUser.IsConfiguring)
             {
                 await SettingsHandler.CompleteConfiguration(botClient, update, chatId, cancellationToken);
+                return;
             }
             switch (messageText)
             {
@@ -41,8 +42,11 @@ namespace HenBot
                     await AyayaHandler.HandleAyaya(botClient, chatId, cancellationToken);
                     break;
                 case "/next":
-                    savedUser.Page++;
-                    await AyayaHandler.DoAyaya(botClient, savedUser.LastTag, chatId, savedUser, cancellationToken);
+                    if (savedUser.IsAyayaed == true)
+                    {
+                        savedUser.Page++;
+                        await AyayaHandler.DoAyaya(botClient, savedUser.LastTag, chatId, savedUser, cancellationToken);
+                    }
                     break;
                 default:
                     return;

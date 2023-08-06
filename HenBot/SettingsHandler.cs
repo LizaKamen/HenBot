@@ -117,7 +117,7 @@ public static class SettingsHandler
 
             await botClient.SendTextMessageAsync(
                 chatId,
-                $"There was a problem with {TagExistenceChecker.wrongTag} tag. Try again with correct spelling",
+                $"There was a problem with {TagExistenceChecker.WrongTag} tag. Try again with correct spelling",
                 cancellationToken: cancellationToken
             );
         }
