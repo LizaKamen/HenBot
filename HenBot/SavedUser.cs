@@ -1,6 +1,6 @@
 ﻿namespace HenBot
 {
-    public class SavedUser
+    public record SavedUser
     {
         public int Step { get; set; }
         public int Page { get; set; } = 0;

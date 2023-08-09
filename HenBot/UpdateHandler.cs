@@ -4,7 +4,7 @@ using Telegram.Bot.Types.Enums;
 
 namespace HenBot
 {
-    public class UpdateHandler
+    public static class UpdateHandler
     {
         public static async Task HandleUpdateAsync(ITelegramBotClient botClient, Update update, CancellationToken cancellationToken)
         {

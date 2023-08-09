@@ -6,6 +6,7 @@ namespace HenBot
     {
         [JsonProperty("@attributes")]
         public Attributes Attributes { get; set; }
+
         public List<Tag> Tag { get; set; }
     }
 }

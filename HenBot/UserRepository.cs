@@ -1,8 +1,8 @@
 ﻿namespace HenBot
 {
-    internal class UserRepository
+    public static class UserRepository
     {
-        private static Dictionary<long, SavedUser> savedUsers = new Dictionary<long, SavedUser>();
+        private static Dictionary<long, SavedUser> savedUsers = new();
 
         public static SavedUser GetUser(long chatId)
         {

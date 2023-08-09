@@ -4,7 +4,7 @@ using Telegram.Bot.Types.Enums;
 
 namespace HenBot
 {
-    internal class Program
+    public class Program
     {
         static async Task Main(string[] args)
         {
