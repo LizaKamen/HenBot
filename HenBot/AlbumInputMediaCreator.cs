@@ -1,16 +1,15 @@
 ﻿using Telegram.Bot.Types;
 
-namespace HenBot
+namespace HenBot;
+
+public static class AlbumInputMediaCreator
 {
-    public static class AlbumInputMediaCreator
+    public static IAlbumInputMedia[] CreateAlbumInputMedia(List<string> urls)
     {
-        public static IAlbumInputMedia[] CreateAlbumInputMedia(List<string> urls)
-        {
-            var AlbumInput = new List<IAlbumInputMedia>(urls.Count);
-            foreach (var url in urls)
-                AlbumInput.Add(new InputMediaPhoto(InputFile.FromUri(url)));
-            var res = AlbumInput.ToArray();
-            return res;
-        }
+        var albumInput = new List<IAlbumInputMedia>(urls.Count);
+        foreach (var url in urls)
+            albumInput.Add(new InputMediaPhoto(InputFile.FromUri(url)));
+        var res = albumInput.ToArray();
+        return res;
     }
 }

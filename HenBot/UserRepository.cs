@@ -1,17 +1,13 @@
-﻿namespace HenBot
+﻿namespace HenBot;
+
+public static class UserRepository
 {
-    public static class UserRepository
+    private static readonly Dictionary<long, SavedUser> savedUsers = new();
+
+    public static SavedUser GetUser(long chatId)
     {
-        private static Dictionary<long, SavedUser> savedUsers = new();
+        if (!savedUsers.ContainsKey(chatId)) savedUsers[chatId] = new SavedUser { Step = 0 };
 
-        public static SavedUser GetUser(long chatId)
-        {
-            if (!savedUsers.ContainsKey(chatId))
-            {
-                savedUsers[chatId] = new SavedUser { Step = 0 };
-            }
-
-            return savedUsers[chatId];
-        }
+        return savedUsers[chatId];
     }
 }

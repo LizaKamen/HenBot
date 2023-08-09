@@ -1,21 +1,21 @@
-﻿using Telegram.Bot.Exceptions;
-using Telegram.Bot;
+﻿using Telegram.Bot;
+using Telegram.Bot.Exceptions;
 
-namespace HenBot
+namespace HenBot;
+
+public static class PoolingErrorHandler
 {
-    public static class PoolingErrorHandler
+    public static Task HandlePollingErrorAsync(ITelegramBotClient botClient, Exception exception,
+        CancellationToken cancellationToken)
     {
-        public static Task HandlePollingErrorAsync(ITelegramBotClient botClient, Exception exception, CancellationToken cancellationToken)
+        var ErrorMessage = exception switch
         {
-            var ErrorMessage = exception switch
-            {
-                ApiRequestException apiRequestException
-                    => $"Telegram API Error:\n[{apiRequestException.ErrorCode}]\n{apiRequestException.Message}",
-                _ => exception.ToString()
-            };
+            ApiRequestException apiRequestException
+                => $"Telegram API Error:\n[{apiRequestException.ErrorCode}]\n{apiRequestException.Message}",
+            _ => exception.ToString()
+        };
 
-            Console.WriteLine(ErrorMessage);
-            return Task.CompletedTask;
-        }
+        Console.WriteLine(ErrorMessage);
+        return Task.CompletedTask;
     }
 }

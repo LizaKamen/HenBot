@@ -1,9 +1,8 @@
-﻿namespace HenBot
+﻿namespace HenBot;
+
+public record Attributes
 {
-    public record Attributes
-    {
-        public int Limit { get; set; }
-        public int Offset { get; set; }
-        public int Count { get; set; }
-    }
+    public int Limit { get; set; }
+    public int Offset { get; set; }
+    public int Count { get; set; }
 }
