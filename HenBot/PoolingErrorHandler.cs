@@ -3,7 +3,7 @@ using Telegram.Bot;
 
 namespace HenBot
 {
-    public class PoolingErrorHandler
+    public static class PoolingErrorHandler
     {
         public static Task HandlePollingErrorAsync(ITelegramBotClient botClient, Exception exception, CancellationToken cancellationToken)
         {

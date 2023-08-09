@@ -3,7 +3,7 @@ using Telegram.Bot.Types;
 
 namespace HenBot
 {
-    public class CallbackHandler
+    public static class CallbackHandler
     {
         public static async void HandleCallback(Update update, ITelegramBotClient botClient, CancellationToken cancellationToken)
         {
@@ -11,9 +11,7 @@ namespace HenBot
             Console.WriteLine($"Received a '{update.Type}' message in chat {chatId}.");
             var savedUser = UserRepository.GetUser(chatId);
             if (savedUser.IsConfiguring)
-            {
                 await SettingsHandler.CompleteConfiguration(botClient, update, chatId, cancellationToken);
-            }
             if (savedUser.IsAyaya)
             {
                 savedUser.LastTag = update.CallbackQuery.Data;

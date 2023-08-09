@@ -8,13 +8,12 @@ public static class SettingsHandler
 {
     private static readonly InlineKeyboardMarkup inlineKeyboard = new(new[]
     {
-        // first row
         new[]
         {
             InlineKeyboardButton.WithCallbackData("General", "1"),
             InlineKeyboardButton.WithCallbackData("Sensitive", "2")
         },
-        // second row
+
         new[]
         {
             InlineKeyboardButton.WithCallbackData("Questionable", "3"),
@@ -36,7 +35,6 @@ public static class SettingsHandler
         CancellationToken cancellationToken)
     {
         var savedUser = UserRepository.GetUser(chatId);
-
         switch (savedUser.Step)
         {
             case 0:
@@ -67,6 +65,7 @@ public static class SettingsHandler
                 cancellationToken: cancellationToken
             );
         }
+
         else
         {
             await botClient.SendTextMessageAsync(chatId, "Please enter a correct number",
@@ -109,18 +108,18 @@ public static class SettingsHandler
         SavedUser savedUser,
         CancellationToken cancellationToken)
     {
-        var tagsToCheck = update.Message.Text.Split(' ').ToList();
+        var tagsToCheck = update.Message.Text.Split(',').ToList();
         if (!await TagExistenceChecker.CheckIfTagsExist(tagsToCheck))
         {
             savedUser.IsConfiguring = false;
             savedUser.Step = 0;
-
             await botClient.SendTextMessageAsync(
                 chatId,
                 $"There was a problem with {TagExistenceChecker.WrongTag} tag. Try again with correct spelling",
                 cancellationToken: cancellationToken
             );
         }
+
         else
         {
             savedUser.SavedTags = tagsToCheck;
@@ -129,7 +128,6 @@ public static class SettingsHandler
                 $"Configuring ended, here are your settings: {savedUser.Limit} pics per post, rating: {savedUser.SettedRating}, saved tags: later))",
                 cancellationToken: cancellationToken
             );
-
             savedUser.IsConfiguring = false;
             savedUser.Step = 0;
         }

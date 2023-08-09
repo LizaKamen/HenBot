@@ -1,23 +1,12 @@
 ﻿namespace HenBot
 {
-    public class UrlExtractor
+    public static class UrlExtractor
     {
         public static List<string> ExtractUrlsFromPostsList(List<Post> postsList)
         {
-            var urls = new List<string>(postsList.Capacity);
-            foreach (var post in postsList)
-            {
-                if (post.Sample == 0)
-                {
-                    urls.Add(post.File_Url);
-                }
-                else
-                {
-                    urls.Add(post.Sample_Url);
-                }
-            }
-
-            return urls;
+            return postsList
+                .Select(p => p.Sample == 0 ? p.File_Url : p.Sample_Url)
+                .ToList();
         }
     }
 }

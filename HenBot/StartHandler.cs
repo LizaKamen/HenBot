@@ -2,7 +2,7 @@
 
 namespace HenBot
 {
-    public class StartHandler
+    public static class StartHandler
     {
         public static async Task HandleStart(ITelegramBotClient botClient, long chatId, CancellationToken cancellationToken)
         {
