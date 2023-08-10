@@ -2,36 +2,34 @@
 using Telegram.Bot.Polling;
 using Telegram.Bot.Types.Enums;
 
-namespace HenBot
+namespace HenBot;
+
+public class Program
 {
-    public class Program
+    private static async Task Main(string[] args)
     {
-        static async Task Main(string[] args)
+        var token = "YOUR TOKEN HERE";
+        var botClient = new TelegramBotClient(token);
+
+        using CancellationTokenSource cts = new();
+
+        // StartReceiving does not block the caller thread. Receiving is done on the ThreadPool.
+        ReceiverOptions receiverOptions = new()
         {
-            var token = "YOUR TOKEN HERE";
-            var botClient = new TelegramBotClient(token);
+            AllowedUpdates = Array.Empty<UpdateType>() // receive all update types except ChatMember related updates
+        };
 
-            using CancellationTokenSource cts = new();
+        botClient.StartReceiving(UpdateHandler.HandleUpdateAsync,
+            PoolingErrorHandler.HandlePollingErrorAsync,
+            receiverOptions,
+            cts.Token);
 
-            // StartReceiving does not block the caller thread. Receiving is done on the ThreadPool.
-            ReceiverOptions receiverOptions = new()
-            {
-                AllowedUpdates = Array.Empty<UpdateType>() // receive all update types except ChatMember related updates
-            };
+        var me = await botClient.GetMeAsync();
 
-            botClient.StartReceiving(updateHandler: UpdateHandler.HandleUpdateAsync,
-                                     pollingErrorHandler: PoolingErrorHandler.HandlePollingErrorAsync,
-                                     receiverOptions: receiverOptions,
-                                     cancellationToken: cts.Token);
+        Console.WriteLine($"Start listening for @{me.Username}");
+        Console.ReadLine();
 
-            var me = await botClient.GetMeAsync();
-
-            Console.WriteLine($"Start listening for @{me.Username}");
-            Console.ReadLine();
-
-            // Send cancellation request to stop bot
-            cts.Cancel();
-        }
+        // Send cancellation request to stop bot
+        cts.Cancel();
     }
 }
-

@@ -1,10 +1,9 @@
-﻿namespace HenBot
+﻿namespace HenBot;
+
+public enum Ratings
 {
-    public enum Ratings
-    {
-        General,
-        Sensitive,
-        Questionable,
-        Explicit
-    }
+    General,
+    Sensitive,
+    Questionable,
+    Explicit
 }
