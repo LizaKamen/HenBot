@@ -10,4 +10,9 @@ public static class UserRepository
 
         return savedUsers[chatId];
     }
+
+    public static void UpdateUser (long chatId, SavedUser userToSave)
+    {
+        savedUsers[chatId] = userToSave;
+    }
 }

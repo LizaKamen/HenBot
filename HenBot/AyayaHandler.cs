@@ -11,7 +11,7 @@ public static class AyayaHandler
         var savedUser = UserRepository.GetUser(chatId);
         UserRepository.GetUser(chatId).IsAyaya = true;
         if (savedUser.SavedTags.Count == 0)
-            await DoAyaya(botClient, "", chatId, savedUser, cancellationToken);
+            await DoAyaya(botClient, "rating:general", chatId, savedUser, cancellationToken);
         else
             await botClient.SendTextMessageAsync(
                 chatId,
@@ -24,7 +24,7 @@ public static class AyayaHandler
         CancellationToken cancellationToken)
     {
         var postsList =
-            await GelbooruSourceService.GetPostsAsync(savedUser.Limit, tags, savedUser.SettedRating, savedUser.Page);
+            await GelbooruSourceService.GetPostsAsync(savedUser.Limit, tags, savedUser.Page);
         var urls = UrlExtractor.ExtractUrlsFromPostsList(postsList);
         Console.WriteLine($"Chat: {chatId}, urls about to send to the chat: {JsonConvert.SerializeObject(urls)}");
         var media = AlbumInputMediaCreator.CreateAlbumInputMedia(urls);

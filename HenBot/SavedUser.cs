@@ -10,5 +10,4 @@ public record SavedUser
     public bool IsAyayaed { get; set; }
     public string LastTag { get; set; }
     public List<string> SavedTags { get; set; } = new();
-    public Ratings SettedRating { get; set; } = Ratings.General;
 }

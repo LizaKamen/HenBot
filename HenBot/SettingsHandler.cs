@@ -1,26 +1,11 @@
 ﻿using Telegram.Bot;
 using Telegram.Bot.Types;
-using Telegram.Bot.Types.ReplyMarkups;
 
 namespace HenBot;
 
 public static class SettingsHandler
 {
-    private static readonly InlineKeyboardMarkup inlineKeyboard = new(new[]
-    {
-        new[]
-        {
-            InlineKeyboardButton.WithCallbackData("General", "1"),
-            InlineKeyboardButton.WithCallbackData("Sensitive", "2")
-        },
-
-        new[]
-        {
-            InlineKeyboardButton.WithCallbackData("Questionable", "3"),
-            InlineKeyboardButton.WithCallbackData("Explicit", "4")
-        }
-    });
-
+    static SavedUser userToSave = new SavedUser();
     public static async Task HandleSettings(ITelegramBotClient botClient, long chatId,
         CancellationToken cancellationToken)
     {
@@ -43,9 +28,6 @@ public static class SettingsHandler
             case 1:
                 await ProcessStep1(botClient, update, chatId, savedUser, cancellationToken);
                 break;
-            case 2:
-                await ProcessStep2(botClient, update, chatId, savedUser, cancellationToken);
-                break;
         }
     }
 
@@ -55,13 +37,12 @@ public static class SettingsHandler
     {
         if (int.TryParse(update.Message.Text, out var limit) && limit <= 10)
         {
-            savedUser.Limit = limit;
-            savedUser.Step++;
+            userToSave.Limit = limit;
+            savedUser.Step ++;
 
             await botClient.SendTextMessageAsync(
                 chatId,
-                "Ok now choose a rating.",
-                replyMarkup: inlineKeyboard,
+                "Ok now write search queries.",
                 cancellationToken: cancellationToken
             );
         }
@@ -77,42 +58,10 @@ public static class SettingsHandler
         SavedUser savedUser,
         CancellationToken cancellationToken)
     {
-        switch (update.CallbackQuery.Data)
+        var tagQueriesToCheck = update.Message.Text.Split(',').ToList();
+        if (!await TagExistenceChecker.CheckIfTagsExist(tagQueriesToCheck))
         {
-            case "1":
-                savedUser.SettedRating = Ratings.General;
-                break;
-            case "2":
-                savedUser.SettedRating = Ratings.Sensitive;
-                break;
-            case "3":
-                savedUser.SettedRating = Ratings.Questionable;
-                break;
-            case "4":
-                savedUser.SettedRating = Ratings.Explicit;
-                break;
-            default:
-                savedUser.SettedRating = Ratings.General;
-                break;
-        }
-
-        savedUser.Step++;
-        await botClient.SendTextMessageAsync(
-            chatId,
-            "Ok now write a few tags",
-            cancellationToken: cancellationToken
-        );
-    }
-
-    private static async Task ProcessStep2(ITelegramBotClient botClient, Update update, long chatId,
-        SavedUser savedUser,
-        CancellationToken cancellationToken)
-    {
-        var tagsToCheck = update.Message.Text.Split(',').ToList();
-        if (!await TagExistenceChecker.CheckIfTagsExist(tagsToCheck))
-        {
-            savedUser.IsConfiguring = false;
-            savedUser.Step = 0;
+            savedUser.Step = 2;
             await botClient.SendTextMessageAsync(
                 chatId,
                 $"There was a problem with {TagExistenceChecker.WrongTag} tag. Try again with correct spelling",
@@ -122,14 +71,15 @@ public static class SettingsHandler
 
         else
         {
-            savedUser.SavedTags = tagsToCheck;
+            userToSave.SavedTags = tagQueriesToCheck;
             await botClient.SendTextMessageAsync(
                 chatId,
-                $"Configuring ended, here are your settings: {savedUser.Limit} pics per post, rating: {savedUser.SettedRating}, saved tags: later))",
+                $"Configuring ended, here are your settings: {userToSave.Limit} pics per post, saved tags: later))",
                 cancellationToken: cancellationToken
             );
-            savedUser.IsConfiguring = false;
-            savedUser.Step = 0;
+            userToSave.IsConfiguring = false;
+            userToSave.Step = 0;
+            UserRepository.UpdateUser(chatId, userToSave);
         }
     }
 }

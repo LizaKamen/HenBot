@@ -18,7 +18,10 @@ public static class TagExistenceChecker
         var tags = tagQuery.Split(' ');
         foreach (var tag in tags)
         {
-            var tagRes = await GelbooruSourceService.GetTagAsync(tag);
+            if(tag.Contains("user:"))
+                continue;
+            var tempTag = tag.Replace("~", "").Replace("{", "").Replace("}", "").Replace("*", "%").Replace(":general", "").Replace(":sensitive", "").Replace(":explicit", "").Replace("questionable", "");
+            var tagRes = await GelbooruSourceService.GetTagAsync(tempTag);
             if (tagRes.Tag == null)
             {
                 WrongTag = tag;
