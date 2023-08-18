@@ -8,7 +8,7 @@ public class Program
 {
     private static async Task Main(string[] args)
     {
-        var token = "YOUR TOKEN HERE";
+        var token = Environment.GetEnvironmentVariable("HenBotToken");
         var botClient = new TelegramBotClient(token);
 
         using CancellationTokenSource cts = new();
