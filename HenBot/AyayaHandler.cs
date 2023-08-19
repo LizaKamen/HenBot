@@ -25,6 +25,11 @@ public static class AyayaHandler
     {
         var postsList =
             await GelbooruSourceService.GetPostsAsync(savedUser.Limit, tags, savedUser.Page);
+        if (postsList == null)
+        {
+            await botClient.SendTextMessageAsync(chatId, "There're no posts by your query, try again with different request", cancellationToken: cancellationToken);
+            return;
+        }
         var urls = UrlExtractor.ExtractUrlsFromPostsList(postsList);
         Console.WriteLine($"Chat: {chatId}, urls about to send to the chat: {JsonConvert.SerializeObject(urls)}");
         var media = AlbumInputMediaCreator.CreateAlbumInputMedia(urls);
