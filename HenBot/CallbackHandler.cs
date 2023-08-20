@@ -16,6 +16,7 @@ public static class CallbackHandler
         if (savedUser.IsAyaya)
         {
             savedUser.LastTag = update.CallbackQuery.Data;
+            UserRepository.UpdateUser(savedUser);
             await AyayaHandler.DoAyaya(botClient, savedUser.LastTag, chatId, savedUser, cancellationToken);
         }
     }

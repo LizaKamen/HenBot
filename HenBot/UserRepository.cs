@@ -1,18 +1,31 @@
-﻿namespace HenBot;
+﻿using Microsoft.EntityFrameworkCore;
+
+namespace HenBot;
 
 public static class UserRepository
 {
+
     private static readonly Dictionary<long, SavedUser> savedUsers = new();
 
     public static SavedUser GetUser(long chatId)
     {
-        if (!savedUsers.ContainsKey(chatId)) savedUsers[chatId] = new SavedUser { Step = 0 };
-
-        return savedUsers[chatId];
+        using var db = new RepositoryContext();
+        if (db.SavedUsers.Find(chatId) == null)
+        {
+            db.Add(new SavedUser {Id = chatId});
+            db.SaveChanges();
+        }
+        return db.SavedUsers.Include(tg => tg.SavedTags).ToList().FirstOrDefault(u => u.Id == chatId);
     }
 
-    public static void UpdateUser (long chatId, SavedUser userToSave)
+    public static void UpdateUser (SavedUser userToSave)
     {
-        savedUsers[chatId] = userToSave;
+        using var db = new RepositoryContext();
+        var userFromDb = GetUser(userToSave.Id);
+        db.SavedUsers.Remove(userFromDb);
+        userFromDb = userToSave;
+        db.SavedUsers.Update(userFromDb);
+        db.SavedUsers.Add(userToSave);
+        db.SaveChanges();
     }
 }

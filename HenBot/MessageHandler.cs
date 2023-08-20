@@ -19,6 +19,7 @@ public static class MessageHandler
         {
             savedUser.IsAyayaed = false;
             savedUser.Page = 0;
+            UserRepository.UpdateUser(savedUser);
         }
 
         if (savedUser.IsConfiguring)
@@ -42,6 +43,7 @@ public static class MessageHandler
                 if (savedUser.IsAyayaed)
                 {
                     savedUser.Page++;
+                    UserRepository.UpdateUser(savedUser);
                     await AyayaHandler.DoAyaya(botClient, savedUser.LastTag, chatId, savedUser, cancellationToken);
                 }
 

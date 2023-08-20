@@ -9,7 +9,9 @@ public static class SettingsHandler
     public static async Task HandleSettings(ITelegramBotClient botClient, long chatId,
         CancellationToken cancellationToken)
     {
-        UserRepository.GetUser(chatId).IsConfiguring = true;
+        var user = UserRepository.GetUser(chatId);
+        user.IsConfiguring = true;
+        UserRepository.UpdateUser(user);
         await botClient.SendTextMessageAsync(
             chatId,
             "Write amount of pics that u want to get per post",
@@ -23,22 +25,23 @@ public static class SettingsHandler
         switch (savedUser.Step)
         {
             case 0:
-                await ProcessStep0(botClient, update, chatId, savedUser, cancellationToken);
+                await ProcessStep0(botClient, update, chatId, cancellationToken);
                 break;
             case 1:
-                await ProcessStep1(botClient, update, chatId, savedUser, cancellationToken);
+                await ProcessStep1(botClient, update, chatId, cancellationToken);
                 break;
         }
     }
 
     private static async Task ProcessStep0(ITelegramBotClient botClient, Update update, long chatId,
-        SavedUser savedUser,
         CancellationToken cancellationToken)
     {
         if (int.TryParse(update.Message.Text, out var limit) && limit <= 10)
         {
             userToSave.Limit = limit;
-            savedUser.Step ++;
+            var user = UserRepository.GetUser(chatId);
+            user.Step++;
+            UserRepository.UpdateUser(user);
 
             await botClient.SendTextMessageAsync(
                 chatId,
@@ -55,13 +58,14 @@ public static class SettingsHandler
     }
 
     private static async Task ProcessStep1(ITelegramBotClient botClient, Update update, long chatId,
-        SavedUser savedUser,
         CancellationToken cancellationToken)
     {
         var tagQueriesToCheck = update.Message.Text.Split(',').ToList();
         if (!await TagExistenceChecker.CheckIfTagsExist(tagQueriesToCheck))
-        {
-            savedUser.Step = 2;
+        {   
+            var user = UserRepository.GetUser(chatId);
+            user.Step = 1;
+            UserRepository.UpdateUser(user);
             await botClient.SendTextMessageAsync(
                 chatId,
                 $"There was a problem with {TagExistenceChecker.WrongTag} tag. Try again with correct spelling",
@@ -71,7 +75,12 @@ public static class SettingsHandler
 
         else
         {
-            userToSave.SavedTags = tagQueriesToCheck;
+            var tagQueries = new List<TagQuery>();
+            foreach (var query in tagQueriesToCheck)
+            {
+                tagQueries.Add(new TagQuery() { Id = new Guid(), Query = query});
+            }
+            userToSave.SavedTags = tagQueries;
             await botClient.SendTextMessageAsync(
                 chatId,
                 $"Configuring ended, here are your settings: {userToSave.Limit} pics per post, saved tags: later))",
@@ -79,7 +88,8 @@ public static class SettingsHandler
             );
             userToSave.IsConfiguring = false;
             userToSave.Step = 0;
-            UserRepository.UpdateUser(chatId, userToSave);
+            userToSave.Id = chatId;
+            UserRepository.UpdateUser(userToSave);
         }
     }
 }

@@ -9,7 +9,8 @@ public static class AyayaHandler
     public static async Task HandleAyaya(ITelegramBotClient botClient, long chatId, CancellationToken cancellationToken)
     {
         var savedUser = UserRepository.GetUser(chatId);
-        UserRepository.GetUser(chatId).IsAyaya = true;
+        savedUser.IsAyaya = true;
+        UserRepository.UpdateUser(savedUser);
         if (savedUser.SavedTags.Count == 0)
             await DoAyaya(botClient, "rating:general", chatId, savedUser, cancellationToken);
         else
@@ -36,6 +37,7 @@ public static class AyayaHandler
         await botClient.SendMediaGroupAsync(chatId, media, cancellationToken: cancellationToken);
         savedUser.IsAyaya = false;
         savedUser.IsAyayaed = true;
+        UserRepository.UpdateUser(savedUser);
     }
 
     private static InlineKeyboardMarkup CreateInlineKeyboard(SavedUser savedUser)
@@ -44,7 +46,7 @@ public static class AyayaHandler
         var inlineKeyboard = new List<InlineKeyboardButton[]>(length);
         for (var i = 0; i < length; i++)
             inlineKeyboard.Add(new[]
-                { InlineKeyboardButton.WithCallbackData(savedUser.SavedTags[i], savedUser.SavedTags[i]) });
+                { InlineKeyboardButton.WithCallbackData(savedUser.SavedTags[i].Query, savedUser.SavedTags[i].Query) });
 
         return inlineKeyboard.ToArray();
     }
