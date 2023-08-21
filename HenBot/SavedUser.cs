@@ -10,5 +10,5 @@ public record SavedUser
     public bool IsAyaya { get; set; }
     public bool IsAyayaed { get; set; }
     public string LastTag { get; set; } = "";
-    public List<TagQuery> SavedTags { get; set; } = new List<TagQuery>();
+    public List<TagQuery> SavedTags { get; set; } = new();
 }
