@@ -13,16 +13,15 @@ public static class MessageHandler
         if (message.Text is not { } messageText)
             return;
         var chatId = message.Chat.Id;
-        var savedUser = UserRepository.GetUser(chatId);
+        var savedChat = ChatRepository.GetChatLocaly(chatId);
         Console.WriteLine($"Received a '{messageText}' message in chat {chatId}.");
         if (messageText != "/next")
         {
-            savedUser.IsAyayaed = false;
-            savedUser.Page = 0;
-            UserRepository.UpdateUser(savedUser);
+            savedChat.IsAyayaed = false;
+            savedChat.Page = 0;
         }
 
-        if (savedUser.IsConfiguring)
+        if (savedChat.IsConfiguring)
         {
             await SettingsHandler.CompleteConfiguration(botClient, update, chatId, cancellationToken);
             return;
@@ -40,11 +39,10 @@ public static class MessageHandler
                 await AyayaHandler.HandleAyaya(botClient, chatId, cancellationToken);
                 break;
             case "/next":
-                if (savedUser.IsAyayaed)
+                if (savedChat.IsAyayaed)
                 {
-                    savedUser.Page++;
-                    UserRepository.UpdateUser(savedUser);
-                    await AyayaHandler.DoAyaya(botClient, savedUser.LastTag, chatId, savedUser, cancellationToken);
+                    savedChat.Page++;
+                    await AyayaHandler.DoAyaya(botClient, savedChat.LastTag, chatId, savedChat, cancellationToken);
                 }
 
                 break;

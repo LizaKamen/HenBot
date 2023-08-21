@@ -47,7 +47,7 @@ namespace HenBot.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("SavedUsers");
+                    b.ToTable("SavedChats");
                 });
 
             modelBuilder.Entity("HenBot.TagQuery", b =>
@@ -60,12 +60,12 @@ namespace HenBot.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<long>("SavedUserId")
+                    b.Property<long>("SavedChatId")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("SavedUserId");
+                    b.HasIndex("SavedChatId");
 
                     b.ToTable("TagQuery");
                 });
@@ -74,7 +74,7 @@ namespace HenBot.Migrations
                 {
                     b.HasOne("HenBot.Chat", "Chat")
                         .WithMany("SavedTags")
-                        .HasForeignKey("SavedUserId")
+                        .HasForeignKey("SavedChatId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

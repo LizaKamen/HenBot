@@ -5,13 +5,12 @@ namespace HenBot;
 
 public static class SettingsHandler
 {
-    static Chat userToSave = new();
+    static Chat chatToSave = new();
     public static async Task HandleSettings(ITelegramBotClient botClient, long chatId,
         CancellationToken cancellationToken)
     {
-        var user = UserRepository.GetUser(chatId);
-        user.IsConfiguring = true;
-        UserRepository.UpdateUser(user);
+        var chat = ChatRepository.GetChatLocaly(chatId);
+        chat.IsConfiguring = true;
         await botClient.SendTextMessageAsync(
             chatId,
             "Write amount of pics that u want to get per post",
@@ -21,8 +20,8 @@ public static class SettingsHandler
     public static async Task CompleteConfiguration(ITelegramBotClient botClient, Update update, long chatId,
         CancellationToken cancellationToken)
     {
-        var savedUser = UserRepository.GetUser(chatId);
-        switch (savedUser.Step)
+        var savedChat = ChatRepository.GetChatLocaly(chatId);
+        switch (savedChat.Step)
         {
             case 0:
                 await ProcessStep0(botClient, update, chatId, cancellationToken);
@@ -38,14 +37,14 @@ public static class SettingsHandler
     {
         if (int.TryParse(update.Message.Text, out var limit) && limit <= 10)
         {
-            userToSave.Limit = limit;
-            var user = UserRepository.GetUser(chatId);
-            user.Step++;
-            UserRepository.UpdateUser(user);
+            chatToSave.Limit = limit;
+            var chat = ChatRepository.GetChatLocaly(chatId);
+            chat.Step++;
 
             await botClient.SendTextMessageAsync(
                 chatId,
-                "Ok now write search queries.",
+                "Ok now write search queries. Like \"genshin_impact rating:general, blue_archive swimsuit rating:sensitive\" you can read more about searching <a href=\"https://gelbooru.com/index.php?page=wiki&s=&s=view&id=26263\">here</a>",
+                parseMode: Telegram.Bot.Types.Enums.ParseMode.Html,
                 cancellationToken: cancellationToken
             );
         }
@@ -61,11 +60,10 @@ public static class SettingsHandler
         CancellationToken cancellationToken)
     {
         var tagQueriesToCheck = update.Message.Text.Split(',').ToList();
+        var chat = ChatRepository.GetChatLocaly(chatId);
         if (!await TagExistenceChecker.CheckIfTagsExist(tagQueriesToCheck))
         {   
-            var user = UserRepository.GetUser(chatId);
-            user.Step = 1;
-            UserRepository.UpdateUser(user);
+            chat.Step = 1;
             await botClient.SendTextMessageAsync(
                 chatId,
                 $"There was a problem with {TagExistenceChecker.WrongTag} tag. Try again with correct spelling",
@@ -80,16 +78,17 @@ public static class SettingsHandler
             {
                 tagQueries.Add(new TagQuery() { Id = new Guid(), Query = query});
             }
-            userToSave.SavedTags = tagQueries;
+            chatToSave.SavedTags = tagQueries;
             await botClient.SendTextMessageAsync(
                 chatId,
-                $"Configuring ended, here are your settings: {userToSave.Limit} pics per post, saved tags: later))",
+                $"Configuring ended, here are your settings: {chatToSave.Limit} pics per post, saved tags: later))",
                 cancellationToken: cancellationToken
             );
-            userToSave.IsConfiguring = false;
-            userToSave.Step = 0;
-            userToSave.Id = chatId;
-            UserRepository.UpdateUser(userToSave);
+            chatToSave.IsConfiguring = false;
+            chatToSave.Step = 0;
+            chatToSave.Id = chatId;
+            chat = chatToSave;
+            ChatRepository.OverrideChatLimitAndSavedTags(chatToSave);
         }
     }
 }

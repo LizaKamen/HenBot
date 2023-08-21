@@ -12,7 +12,7 @@ namespace HenBot.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "SavedUsers",
+                name: "SavedChats",
                 columns: table => new
                 {
                     Id = table.Column<long>(type: "INTEGER", nullable: false)
@@ -27,7 +27,7 @@ namespace HenBot.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_SavedUsers", x => x.Id);
+                    table.PrimaryKey("PK_SavedChats", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -36,23 +36,23 @@ namespace HenBot.Migrations
                 {
                     Id = table.Column<Guid>(type: "TEXT", nullable: false),
                     Query = table.Column<string>(type: "TEXT", nullable: false),
-                    SavedUserId = table.Column<long>(type: "INTEGER", nullable: false)
+                    SavedChatId = table.Column<long>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_TagQuery", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_TagQuery_SavedUsers_SavedUserId",
-                        column: x => x.SavedUserId,
-                        principalTable: "SavedUsers",
+                        name: "FK_TagQuery_SavedChats_SavedChatId",
+                        column: x => x.SavedChatId,
+                        principalTable: "SavedChats",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_TagQuery_SavedUserId",
+                name: "IX_TagQuery_SavedChatId",
                 table: "TagQuery",
-                column: "SavedUserId");
+                column: "SavedChatId");
         }
 
         /// <inheritdoc />
@@ -62,7 +62,7 @@ namespace HenBot.Migrations
                 name: "TagQuery");
 
             migrationBuilder.DropTable(
-                name: "SavedUsers");
+                name: "SavedChats");
         }
     }
 }

@@ -7,6 +7,6 @@ public record TagQuery
     public Guid Id { get; set; }
     public string Query { get; set; }
     [ForeignKey(nameof(Chat))]
-    public long SavedUserId { get; set; }
+    public long SavedChatId { get; set; }
     public Chat Chat { get; set; }
 }

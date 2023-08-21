@@ -1,10 +1,12 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Console;
 
 namespace HenBot;
 
 public class RepositoryContext : DbContext
 {
-    public DbSet<Chat>? SavedUsers { get; set; }
+    public DbSet<Chat>? SavedChats { get; set; }
     public DbSet<TagQuery>? TagQuery { get; set; } 
 
     public string DbPath { get; }
@@ -17,5 +19,11 @@ public class RepositoryContext : DbContext
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) 
-        => optionsBuilder.UseSqlite($"Data Source={DbPath}");
+    {
+        optionsBuilder
+            .UseLoggerFactory(LoggerFactory.Create(builder => builder.AddConsole()))
+            .EnableSensitiveDataLogging()
+            .UseSqlite($"Data Source={DbPath}");
+        base.OnConfiguring(optionsBuilder);
+    }
 }

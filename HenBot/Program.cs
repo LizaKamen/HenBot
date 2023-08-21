@@ -9,6 +9,11 @@ public class Program
     private static async Task Main(string[] args)
     {
         var token = Environment.GetEnvironmentVariable("HenBotToken");
+        if (token is null)
+        {
+            System.Console.WriteLine("Token is null");
+            throw new Exception("Token is null");
+        }
         var botClient = new TelegramBotClient(token);
 
         using CancellationTokenSource cts = new();
