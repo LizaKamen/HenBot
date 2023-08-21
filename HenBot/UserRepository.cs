@@ -10,12 +10,17 @@ public static class UserRepository
     public static SavedUser GetUser(long chatId)
     {
         using var db = new RepositoryContext();
-        if (db.SavedUsers.Find(chatId) == null)
-        {
-            db.Add(new SavedUser {Id = chatId});
-            db.SaveChanges();
-        }
-        return db.SavedUsers.Include(tg => tg.SavedTags).ToList().FirstOrDefault(u => u.Id == chatId);
+        var user = db.SavedUsers
+            .Include(tg => tg.SavedTags)
+            .FirstOrDefault(u => u.Id == chatId);
+
+        if (user is not null)
+            return user;
+
+        user = new SavedUser { Id = chatId };
+        db.Add(user);
+        db.SaveChanges();
+        return user;
     }
 
     public static void UpdateUser (SavedUser userToSave)
