@@ -5,7 +5,7 @@ namespace HenBot;
 
 public static class SettingsHandler
 {
-    static SavedUser userToSave = new SavedUser();
+    static SavedUser userToSave = new();
     public static async Task HandleSettings(ITelegramBotClient botClient, long chatId,
         CancellationToken cancellationToken)
     {
