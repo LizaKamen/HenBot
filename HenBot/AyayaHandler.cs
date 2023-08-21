@@ -21,7 +21,7 @@ public static class AyayaHandler
                 cancellationToken: cancellationToken);
     }
 
-    public static async Task DoAyaya(ITelegramBotClient botClient, string tags, long chatId, SavedUser savedUser,
+    public static async Task DoAyaya(ITelegramBotClient botClient, string tags, long chatId, Chat savedUser,
         CancellationToken cancellationToken)
     {
         var postsList =
@@ -40,7 +40,7 @@ public static class AyayaHandler
         UserRepository.UpdateUser(savedUser);
     }
 
-    private static InlineKeyboardMarkup CreateInlineKeyboard(SavedUser savedUser)
+    private static InlineKeyboardMarkup CreateInlineKeyboard(Chat savedUser)
     {
         var length = savedUser.SavedTags.Count >= 10 ? 10 : savedUser.SavedTags.Count;
         var inlineKeyboard = new List<InlineKeyboardButton[]>(length);

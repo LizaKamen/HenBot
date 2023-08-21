@@ -1,4 +1,6 @@
-﻿namespace HenBot;
+﻿using System.Text.RegularExpressions;
+
+namespace HenBot;
 
 public static class TagExistenceChecker
 {

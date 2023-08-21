@@ -1,6 +1,6 @@
 ﻿namespace HenBot;
 
-public record SavedUser
+public record Chat
 {
     public long Id { get; set; }
     public int Step { get; set; }

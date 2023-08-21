@@ -5,9 +5,9 @@ namespace HenBot;
 public static class UserRepository
 {
 
-    private static readonly Dictionary<long, SavedUser> savedUsers = new();
+    private static readonly Dictionary<long, Chat> savedUsers = new();
 
-    public static SavedUser GetUser(long chatId)
+    public static Chat GetUser(long chatId)
     {
         using var db = new RepositoryContext();
         var user = db.SavedUsers
@@ -17,13 +17,13 @@ public static class UserRepository
         if (user is not null)
             return user;
 
-        user = new SavedUser { Id = chatId };
+        user = new Chat { Id = chatId };
         db.Add(user);
         db.SaveChanges();
         return user;
     }
 
-    public static void UpdateUser (SavedUser userToSave)
+    public static void UpdateUser (Chat userToSave)
     {
         using var db = new RepositoryContext();
         var userFromDb = GetUser(userToSave.Id);

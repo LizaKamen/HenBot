@@ -6,7 +6,7 @@ public static class GelbooruSourceService
 {
     private static readonly RestClient _client = RestHttpClient.GetRestClient();
 
-    public static async Task<List<Post>> GetPostsAsync(int limit, string tags, int page)
+    public static async Task<List<Post>?> GetPostsAsync(int limit, string tags, int page)
     {
         var request = new RestRequest("index.php");
         request
@@ -18,7 +18,7 @@ public static class GelbooruSourceService
             .AddParameter("pid", page)
             .AddParameter("json", "1");
         var postObject = await _client.GetAsync<PostObject>(request);
-        return postObject.Post;
+        return postObject?.Post;
     }
 
     public static async Task<TagObject> GetTagAsync(string tag)

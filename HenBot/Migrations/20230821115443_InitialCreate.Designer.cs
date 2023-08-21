@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HenBot.Migrations
 {
     [DbContext(typeof(RepositoryContext))]
-    [Migration("20230820205849_InitialCreate")]
+    [Migration("20230821115443_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -20,7 +20,7 @@ namespace HenBot.Migrations
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "7.0.10");
 
-            modelBuilder.Entity("HenBot.SavedUser", b =>
+            modelBuilder.Entity("HenBot.Chat", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -75,16 +75,16 @@ namespace HenBot.Migrations
 
             modelBuilder.Entity("HenBot.TagQuery", b =>
                 {
-                    b.HasOne("HenBot.SavedUser", "SavedUser")
+                    b.HasOne("HenBot.Chat", "Chat")
                         .WithMany("SavedTags")
                         .HasForeignKey("SavedUserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("SavedUser");
+                    b.Navigation("Chat");
                 });
 
-            modelBuilder.Entity("HenBot.SavedUser", b =>
+            modelBuilder.Entity("HenBot.Chat", b =>
                 {
                     b.Navigation("SavedTags");
                 });

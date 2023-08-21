@@ -4,7 +4,7 @@ namespace HenBot;
 
 public class RepositoryContext : DbContext
 {
-    public DbSet<SavedUser>? SavedUsers { get; set; }
+    public DbSet<Chat>? SavedUsers { get; set; }
     public DbSet<TagQuery>? TagQuery { get; set; } 
 
     public string DbPath { get; }
@@ -13,7 +13,7 @@ public class RepositoryContext : DbContext
     {
         var folder = Environment.SpecialFolder.LocalApplicationData;
         var path = Environment.GetFolderPath(folder);
-        DbPath = Path.Join(path, "users.db");
+        DbPath = Path.Join(path, "henbot.db");
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) 
