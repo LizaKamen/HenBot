@@ -3,8 +3,13 @@
 Add your token to env variables with name "HenBotToken" on [Windows](https://docs.oracle.com/en/database/oracle/machine-learning/oml4r/1.5.1/oread/creating-and-modifying-environment-variables-on-windows.html) on linux edit the /etc/environment file and relogin/reboot if u use mac kys.
 
 Apply migration:
-    dotnet tool install --global dotnet-ef
-    dotnet ef database update
+
+1. Installing the tools:
+    
+        dotnet tool install --global dotnet-ef
+2. Update database:
+
+        dotnet ef database update
 
 Availble commands:
 
