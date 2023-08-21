@@ -20,7 +20,8 @@ public static class TagExistenceChecker
         {
             if(tag.Contains("user:"))
                 continue;
-            var tempTag = tag.Replace("~", "").Replace("{", "").Replace("}", "").Replace("*", "%").Replace(":general", "").Replace(":sensitive", "").Replace(":explicit", "").Replace("questionable", "");
+            var pattern = @"[~{}*:]|:general|:sensitive|:explicit|questionable";
+            var tempTag = Regex.Replace(tag, pattern, "");
             var tagRes = await GelbooruSourceService.GetTagAsync(tempTag);
             if (tagRes.Tag == null)
             {
