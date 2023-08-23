@@ -8,7 +8,7 @@ public static class AyayaHandler
 {
     public static async Task HandleAyaya(ITelegramBotClient botClient, long chatId, CancellationToken cancellationToken)
     {
-        var chatLocal = ChatRepository.GetChatLocaly(chatId);
+        var chatLocal = LocalChatRepository.GetChatLocaly(chatId);
         chatLocal.IsAyaya = true;
         var savedChat = ChatRepository.GetChatFromDb(chatId);
         chatLocal.Limit = savedChat.Limit;

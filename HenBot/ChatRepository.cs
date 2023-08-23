@@ -4,15 +4,6 @@ namespace HenBot;
 
 public static class ChatRepository
 {
-
-    private static readonly Dictionary<long, Chat> savedChats = new();
-    public static Chat GetChatLocaly (long chatId)
-    {
-        if (!savedChats.ContainsKey(chatId)) savedChats[chatId] = new Chat { Step = 0 };
-
-        return savedChats[chatId];
-    }
-
     public static Chat GetChatFromDb(long chatId)
     {
         using var db = new RepositoryContext();
@@ -36,7 +27,6 @@ public static class ChatRepository
         db.SavedChats.Update(chatFromDb);
         chatFromDb.Limit = chatToSave.Limit;
         chatFromDb.SavedTags = chatToSave.SavedTags;
-        savedChats[chatToSave.Id] = chatToSave;
         db.SaveChanges();
     }
 }

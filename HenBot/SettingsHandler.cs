@@ -9,7 +9,7 @@ public static class SettingsHandler
     public static async Task HandleSettings(ITelegramBotClient botClient, long chatId,
         CancellationToken cancellationToken)
     {
-        var chat = ChatRepository.GetChatLocaly(chatId);
+        var chat = LocalChatRepository.GetChatLocaly(chatId);
         chat.IsConfiguring = true;
         await botClient.SendTextMessageAsync(
             chatId,
@@ -20,7 +20,7 @@ public static class SettingsHandler
     public static async Task CompleteConfiguration(ITelegramBotClient botClient, Update update, long chatId,
         CancellationToken cancellationToken)
     {
-        var savedChat = ChatRepository.GetChatLocaly(chatId);
+        var savedChat = LocalChatRepository.GetChatLocaly(chatId);
         switch (savedChat.Step)
         {
             case 0:
@@ -38,7 +38,7 @@ public static class SettingsHandler
         if (int.TryParse(update.Message.Text, out var limit) && limit <= 10)
         {
             chatToSave.Limit = limit;
-            var chat = ChatRepository.GetChatLocaly(chatId);
+            var chat = LocalChatRepository.GetChatLocaly(chatId);
             chat.Step++;
 
             await botClient.SendTextMessageAsync(
@@ -60,7 +60,7 @@ public static class SettingsHandler
         CancellationToken cancellationToken)
     {
         var tagQueriesToCheck = update.Message.Text.Split(',').ToList();
-        var chat = ChatRepository.GetChatLocaly(chatId);
+        var chat = LocalChatRepository.GetChatLocaly(chatId);
         if (!await TagExistenceChecker.CheckIfTagsExist(tagQueriesToCheck))
         {   
             chat.Step = 1;
@@ -84,10 +84,11 @@ public static class SettingsHandler
                 $"Configuring ended, here are your settings: {chatToSave.Limit} pics per post, saved tags: later))",
                 cancellationToken: cancellationToken
             );
-            chatToSave.IsConfiguring = false;
-            chatToSave.Step = 0;
+            chat.IsConfiguring = false;
+            chat.Step = 0;
             chatToSave.Id = chatId;
-            chat = chatToSave;
+            chat.Limit = chatToSave.Limit;
+            chat.SavedTags = chatToSave.SavedTags;
             ChatRepository.OverrideChatLimitAndSavedTags(chatToSave);
         }
     }
