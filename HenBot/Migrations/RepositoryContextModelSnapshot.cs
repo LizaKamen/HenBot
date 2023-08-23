@@ -23,26 +23,7 @@ namespace HenBot.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<bool>("IsAyaya")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<bool>("IsAyayaed")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<bool>("IsConfiguring")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("LastTag")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
                     b.Property<int>("Limit")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("Page")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("Step")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");

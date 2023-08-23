@@ -26,7 +26,7 @@ public static class AyayaHandler
                 cancellationToken: cancellationToken);
     }
 
-    public static async Task DoAyaya(ITelegramBotClient botClient, string tags, long chatId, Chat savedChat,
+    public static async Task DoAyaya(ITelegramBotClient botClient, string tags, long chatId, LocalChat savedChat,
         CancellationToken cancellationToken)
     {
         var postsList =

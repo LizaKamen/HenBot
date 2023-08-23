@@ -17,13 +17,7 @@ namespace HenBot.Migrations
                 {
                     Id = table.Column<long>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    Step = table.Column<int>(type: "INTEGER", nullable: false),
-                    Page = table.Column<int>(type: "INTEGER", nullable: false),
-                    Limit = table.Column<int>(type: "INTEGER", nullable: false),
-                    IsConfiguring = table.Column<bool>(type: "INTEGER", nullable: false),
-                    IsAyaya = table.Column<bool>(type: "INTEGER", nullable: false),
-                    IsAyayaed = table.Column<bool>(type: "INTEGER", nullable: false),
-                    LastTag = table.Column<string>(type: "TEXT", nullable: false)
+                    Limit = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {

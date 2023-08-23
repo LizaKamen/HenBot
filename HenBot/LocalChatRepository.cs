@@ -2,10 +2,10 @@ namespace HenBot;
 
 public static class LocalChatRepository 
 {
-    private static readonly Dictionary<long, Chat> savedChats = new();
-    public static Chat GetChatLocaly (long chatId)
+    private static readonly Dictionary<long, LocalChat> savedChats = new();
+    public static LocalChat GetChatLocaly (long chatId)
     {
-        if (!savedChats.ContainsKey(chatId)) savedChats[chatId] = new Chat { Step = 0 };
+        if (!savedChats.ContainsKey(chatId)) savedChats[chatId] = new LocalChat { Step = 0 };
 
         return savedChats[chatId];
     }    
