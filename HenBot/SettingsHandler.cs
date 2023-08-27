@@ -87,8 +87,6 @@ public static class SettingsHandler
             chat.IsConfiguring = false;
             chat.Step = 0;
             chatToSave.Id = chatId;
-            chat.Limit = chatToSave.Limit;
-            chat.SavedTags = chatToSave.SavedTags;
             ChatRepository.OverrideChatLimitAndSavedTags(chatToSave);
         }
     }

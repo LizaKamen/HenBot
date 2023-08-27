@@ -11,7 +11,6 @@ public static class AyayaHandler
         var chatLocal = LocalChatRepository.GetChatLocaly(chatId);
         chatLocal.IsAyaya = true;
         var savedChat = ChatRepository.GetChatFromDb(chatId);
-        chatLocal.Limit = savedChat.Limit;
         if (savedChat.SavedTags.Count == 0)
         {
             chatLocal.LastTag = "rating:general";
@@ -29,8 +28,9 @@ public static class AyayaHandler
     public static async Task DoAyaya(ITelegramBotClient botClient, string tags, long chatId, LocalChat savedChat,
         CancellationToken cancellationToken)
     {
+        var chat = ChatRepository.GetChatFromDb(chatId);
         var postsList =
-            await GelbooruSourceService.GetPostsAsync(savedChat.Limit, tags, savedChat.Page);
+            await GelbooruSourceService.GetPostsAsync(chat.Limit, tags, savedChat.Page);
         if (postsList == null)
         {
             await botClient.SendTextMessageAsync(chatId, "There're no posts by your query, try again with different request", cancellationToken: cancellationToken);
