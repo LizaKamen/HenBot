@@ -1,4 +1,6 @@
-﻿namespace HenBot;
+﻿using System.Text.RegularExpressions;
+
+namespace HenBot;
 
 public static class TagExistenceChecker
 {
@@ -18,7 +20,11 @@ public static class TagExistenceChecker
         var tags = tagQuery.Split(' ');
         foreach (var tag in tags)
         {
-            var tagRes = await GelbooruSourceService.GetTagAsync(tag);
+            if(tag.Contains("user:"))
+                continue;
+            var pattern = @"[~{}*]|:general|:sensitive|:explicit|questionable";
+            var tempTag = Regex.Replace(tag, pattern, "");
+            var tagRes = await GelbooruSourceService.GetTagAsync(tempTag);
             if (tagRes.Tag == null)
             {
                 WrongTag = tag;

@@ -1,30 +1,16 @@
 ﻿using Telegram.Bot;
 using Telegram.Bot.Types;
-using Telegram.Bot.Types.ReplyMarkups;
 
 namespace HenBot;
 
 public static class SettingsHandler
 {
-    private static readonly InlineKeyboardMarkup inlineKeyboard = new(new[]
-    {
-        new[]
-        {
-            InlineKeyboardButton.WithCallbackData("General", "1"),
-            InlineKeyboardButton.WithCallbackData("Sensitive", "2")
-        },
-
-        new[]
-        {
-            InlineKeyboardButton.WithCallbackData("Questionable", "3"),
-            InlineKeyboardButton.WithCallbackData("Explicit", "4")
-        }
-    });
-
+    static Chat chatToSave = new();
     public static async Task HandleSettings(ITelegramBotClient botClient, long chatId,
         CancellationToken cancellationToken)
     {
-        UserRepository.GetUser(chatId).IsConfiguring = true;
+        var chat = LocalChatRepository.GetChatLocaly(chatId);
+        chat.IsConfiguring = true;
         await botClient.SendTextMessageAsync(
             chatId,
             "Write amount of pics that u want to get per post",
@@ -34,34 +20,31 @@ public static class SettingsHandler
     public static async Task CompleteConfiguration(ITelegramBotClient botClient, Update update, long chatId,
         CancellationToken cancellationToken)
     {
-        var savedUser = UserRepository.GetUser(chatId);
-        switch (savedUser.Step)
+        var savedChat = LocalChatRepository.GetChatLocaly(chatId);
+        switch (savedChat.Step)
         {
             case 0:
-                await ProcessStep0(botClient, update, chatId, savedUser, cancellationToken);
+                await ProcessStep0(botClient, update, chatId, cancellationToken);
                 break;
             case 1:
-                await ProcessStep1(botClient, update, chatId, savedUser, cancellationToken);
-                break;
-            case 2:
-                await ProcessStep2(botClient, update, chatId, savedUser, cancellationToken);
+                await ProcessStep1(botClient, update, chatId, cancellationToken);
                 break;
         }
     }
 
     private static async Task ProcessStep0(ITelegramBotClient botClient, Update update, long chatId,
-        SavedUser savedUser,
         CancellationToken cancellationToken)
     {
         if (int.TryParse(update.Message.Text, out var limit) && limit <= 10)
         {
-            savedUser.Limit = limit;
-            savedUser.Step++;
+            chatToSave.Limit = limit;
+            var chat = LocalChatRepository.GetChatLocaly(chatId);
+            chat.Step++;
 
             await botClient.SendTextMessageAsync(
                 chatId,
-                "Ok now choose a rating.",
-                replyMarkup: inlineKeyboard,
+                "Ok now write search queries. Like \"genshin_impact rating:general, blue_archive swimsuit rating:sensitive\" you can read more about searching <a href=\"https://gelbooru.com/index.php?page=wiki&s=&s=view&id=26263\">here</a>",
+                parseMode: Telegram.Bot.Types.Enums.ParseMode.Html,
                 cancellationToken: cancellationToken
             );
         }
@@ -74,45 +57,13 @@ public static class SettingsHandler
     }
 
     private static async Task ProcessStep1(ITelegramBotClient botClient, Update update, long chatId,
-        SavedUser savedUser,
         CancellationToken cancellationToken)
     {
-        switch (update.CallbackQuery.Data)
-        {
-            case "1":
-                savedUser.SettedRating = Ratings.General;
-                break;
-            case "2":
-                savedUser.SettedRating = Ratings.Sensitive;
-                break;
-            case "3":
-                savedUser.SettedRating = Ratings.Questionable;
-                break;
-            case "4":
-                savedUser.SettedRating = Ratings.Explicit;
-                break;
-            default:
-                savedUser.SettedRating = Ratings.General;
-                break;
-        }
-
-        savedUser.Step++;
-        await botClient.SendTextMessageAsync(
-            chatId,
-            "Ok now write a few tags",
-            cancellationToken: cancellationToken
-        );
-    }
-
-    private static async Task ProcessStep2(ITelegramBotClient botClient, Update update, long chatId,
-        SavedUser savedUser,
-        CancellationToken cancellationToken)
-    {
-        var tagsToCheck = update.Message.Text.Split(',').ToList();
-        if (!await TagExistenceChecker.CheckIfTagsExist(tagsToCheck))
-        {
-            savedUser.IsConfiguring = false;
-            savedUser.Step = 0;
+        var tagQueriesToCheck = update.Message.Text.Split(',').ToList();
+        var chat = LocalChatRepository.GetChatLocaly(chatId);
+        if (!await TagExistenceChecker.CheckIfTagsExist(tagQueriesToCheck))
+        {   
+            chat.Step = 1;
             await botClient.SendTextMessageAsync(
                 chatId,
                 $"There was a problem with {TagExistenceChecker.WrongTag} tag. Try again with correct spelling",
@@ -122,14 +73,21 @@ public static class SettingsHandler
 
         else
         {
-            savedUser.SavedTags = tagsToCheck;
+            var tagQueries = new List<TagQuery>();
+            foreach (var query in tagQueriesToCheck)
+            {
+                tagQueries.Add(new TagQuery() { Id = new Guid(), Query = query});
+            }
+            chatToSave.SavedTags = tagQueries;
             await botClient.SendTextMessageAsync(
                 chatId,
-                $"Configuring ended, here are your settings: {savedUser.Limit} pics per post, rating: {savedUser.SettedRating}, saved tags: later))",
+                $"Configuring ended, here are your settings: {chatToSave.Limit} pics per post, saved tags: later))",
                 cancellationToken: cancellationToken
             );
-            savedUser.IsConfiguring = false;
-            savedUser.Step = 0;
+            chat.IsConfiguring = false;
+            chat.Step = 0;
+            chatToSave.Id = chatId;
+            ChatRepository.OverrideChatLimitAndSavedTags(chatToSave);
         }
     }
 }
