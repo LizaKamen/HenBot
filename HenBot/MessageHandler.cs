@@ -13,7 +13,7 @@ public static class MessageHandler
         if (message.Text is not { } messageText)
             return;
         var chatId = message.Chat.Id;
-        var savedChat = LocalChatRepository.GetChatLocaly(chatId);
+        var savedChat = LocalChatRepository.GetLocalChat(chatId);
         Console.WriteLine($"Received a '{messageText}' message in chat {chatId}.");
         if (messageText != "/next")
         {

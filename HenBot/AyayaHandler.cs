@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json;
 using Telegram.Bot;
 using Telegram.Bot.Types.ReplyMarkups;
 
@@ -8,7 +8,7 @@ public static class AyayaHandler
 {
     public static async Task HandleAyaya(ITelegramBotClient botClient, long chatId, CancellationToken cancellationToken)
     {
-        var chatLocal = LocalChatRepository.GetChatLocaly(chatId);
+        var chatLocal = LocalChatRepository.GetLocalChat(chatId);
         chatLocal.IsAyaya = true;
         var savedChat = ChatRepository.GetChatFromDb(chatId);
         if (savedChat.SavedTags.Count == 0)
@@ -18,7 +18,7 @@ public static class AyayaHandler
         }
 
         else
-            await botClient.SendTextMessageAsync(
+            await botClient.SendMessage(
                 chatId,
                 "Choose tag",
                 replyMarkup: CreateInlineKeyboard(savedChat),
@@ -33,13 +33,13 @@ public static class AyayaHandler
             await GelbooruSourceService.GetPostsAsync(chat.Limit, tags, savedChat.Page);
         if (postsList == null)
         {
-            await botClient.SendTextMessageAsync(chatId, "There're no posts by your query, try again with different request", cancellationToken: cancellationToken);
+            await botClient.SendMessage(chatId, "There're no posts by your query, try again with different request", cancellationToken: cancellationToken);
             return;
         }
         var urls = UrlExtractor.ExtractUrlsFromPostsList(postsList);
-        Console.WriteLine($"Chat: {chatId}, urls about to send to the chat: {JsonConvert.SerializeObject(urls)}");
+        Console.WriteLine($"Chat: {chatId}, urls about to send to the chat: {JsonSerializer.Serialize(urls)}");
         var media = AlbumInputMediaCreator.CreateAlbumInputMedia(urls);
-        await botClient.SendMediaGroupAsync(chatId, media, cancellationToken: cancellationToken);
+        await botClient.SendMediaGroup(chatId, media, cancellationToken: cancellationToken);
         savedChat.IsAyaya = false;
         savedChat.IsAyayaed = true;
     }

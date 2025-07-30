@@ -1,4 +1,5 @@
-﻿using Telegram.Bot;
+﻿using Microsoft.Extensions.Configuration;
+using Telegram.Bot;
 using Telegram.Bot.Polling;
 using Telegram.Bot.Types.Enums;
 
@@ -8,7 +9,9 @@ public class Program
 {
     private static async Task Main(string[] args)
     {
-        var token = Environment.GetEnvironmentVariable("HenBotToken");
+        
+
+        var token = Appsettings.BotToken;
         if (token is null)
         {
             System.Console.WriteLine("Token is null");
@@ -29,7 +32,7 @@ public class Program
             receiverOptions,
             cts.Token);
 
-        var me = await botClient.GetMeAsync();
+        var me = await botClient.GetMe();
 
         Console.WriteLine($"Start listening for @{me.Username}");
         Console.ReadLine();

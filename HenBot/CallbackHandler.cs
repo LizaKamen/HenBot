@@ -10,7 +10,7 @@ public static class CallbackHandler
     {
         var chatId = update.CallbackQuery.Message.Chat.Id;
         Console.WriteLine($"Received a '{update.Type}' message in chat {chatId}.");
-        var savedChat = LocalChatRepository.GetChatLocaly(chatId);
+        var savedChat = LocalChatRepository.GetLocalChat(chatId);
         if (savedChat.IsConfiguring)
             await SettingsHandler.CompleteConfiguration(botClient, update, chatId, cancellationToken);
         if (savedChat.IsAyaya)

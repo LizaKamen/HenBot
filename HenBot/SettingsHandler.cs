@@ -9,9 +9,9 @@ public static class SettingsHandler
     public static async Task HandleSettings(ITelegramBotClient botClient, long chatId,
         CancellationToken cancellationToken)
     {
-        var chat = LocalChatRepository.GetChatLocaly(chatId);
+        var chat = LocalChatRepository.GetLocalChat(chatId);
         chat.IsConfiguring = true;
-        await botClient.SendTextMessageAsync(
+        await botClient.SendMessage(
             chatId,
             "Write amount of pics that u want to get per post",
             cancellationToken: cancellationToken);
@@ -20,7 +20,7 @@ public static class SettingsHandler
     public static async Task CompleteConfiguration(ITelegramBotClient botClient, Update update, long chatId,
         CancellationToken cancellationToken)
     {
-        var savedChat = LocalChatRepository.GetChatLocaly(chatId);
+        var savedChat = LocalChatRepository.GetLocalChat(chatId);
         switch (savedChat.Step)
         {
             case 0:
@@ -38,10 +38,10 @@ public static class SettingsHandler
         if (int.TryParse(update.Message.Text, out var limit) && limit <= 10)
         {
             chatToSave.Limit = limit;
-            var chat = LocalChatRepository.GetChatLocaly(chatId);
+            var chat = LocalChatRepository.GetLocalChat(chatId);
             chat.Step++;
 
-            await botClient.SendTextMessageAsync(
+            await botClient.SendMessage(
                 chatId,
                 "Ok now write search queries. Like \"genshin_impact rating:general, blue_archive swimsuit rating:sensitive\" you can read more about searching <a href=\"https://gelbooru.com/index.php?page=wiki&s=&s=view&id=26263\">here</a>",
                 parseMode: Telegram.Bot.Types.Enums.ParseMode.Html,
@@ -51,7 +51,7 @@ public static class SettingsHandler
 
         else
         {
-            await botClient.SendTextMessageAsync(chatId, "Please enter a correct number",
+            await botClient.SendMessage(chatId, "Please enter a correct number",
                 cancellationToken: cancellationToken);
         }
     }
@@ -60,11 +60,11 @@ public static class SettingsHandler
         CancellationToken cancellationToken)
     {
         var tagQueriesToCheck = update.Message.Text.Split(',').ToList();
-        var chat = LocalChatRepository.GetChatLocaly(chatId);
+        var chat = LocalChatRepository.GetLocalChat(chatId);
         if (!await TagExistenceChecker.CheckIfTagsExist(tagQueriesToCheck))
         {   
             chat.Step = 1;
-            await botClient.SendTextMessageAsync(
+            await botClient.SendMessage(
                 chatId,
                 $"There was a problem with {TagExistenceChecker.WrongTag} tag. Try again with correct spelling",
                 cancellationToken: cancellationToken
@@ -79,7 +79,7 @@ public static class SettingsHandler
                 tagQueries.Add(new TagQuery() { Id = new Guid(), Query = query});
             }
             chatToSave.SavedTags = tagQueries;
-            await botClient.SendTextMessageAsync(
+            await botClient.SendMessage(
                 chatId,
                 $"Configuring ended, here are your settings: {chatToSave.Limit} pics per post, saved tags: later))",
                 cancellationToken: cancellationToken
