@@ -1,7 +1,7 @@
 ﻿using Telegram.Bot;
 using Telegram.Bot.Exceptions;
 
-namespace HenBot;
+namespace HenBot.Handlers;
 
 public static class PoolingErrorHandler
 {

@@ -1,4 +1,6 @@
-﻿namespace HenBot;
+﻿using HenBot.Models;
+
+namespace HenBot.Helpers;
 
 public static class UrlExtractor
 {

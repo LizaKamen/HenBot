@@ -1,4 +1,4 @@
-﻿namespace HenBot;
+﻿namespace HenBot.Helpers;
 
 public static class TagsQueryBuilder
 {

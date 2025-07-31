@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace HenBot;
+namespace HenBot.Models;
 
 public record PostObject
 {

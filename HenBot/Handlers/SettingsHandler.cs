@@ -1,11 +1,14 @@
-﻿using Telegram.Bot;
+﻿using HenBot.Helpers;
+using HenBot.Models;
+using HenBot.Repository;
+using Telegram.Bot;
 using Telegram.Bot.Types;
 
-namespace HenBot;
+namespace HenBot.Handlers;
 
 public static class SettingsHandler
 {
-    static Chat chatToSave = new();
+    static Models.Chat chatToSave = new();
     public static async Task HandleSettings(ITelegramBotClient botClient, long chatId,
         CancellationToken cancellationToken)
     {

@@ -1,6 +1,6 @@
 ﻿using Telegram.Bot;
 
-namespace HenBot;
+namespace HenBot.Handlers;
 
 public static class StartHandler
 {

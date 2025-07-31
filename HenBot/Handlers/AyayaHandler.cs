@@ -1,8 +1,12 @@
-﻿using System.Text.Json;
+﻿using HenBot.Helpers;
+using HenBot.Models;
+using HenBot.Repository;
+using HenBot.Services;
+using System.Text.Json;
 using Telegram.Bot;
 using Telegram.Bot.Types.ReplyMarkups;
 
-namespace HenBot;
+namespace HenBot.Handlers;
 
 public static class AyayaHandler
 {

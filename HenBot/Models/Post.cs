@@ -1,4 +1,4 @@
-﻿namespace HenBot
+﻿namespace HenBot.Models
 {
     public record Post
     {

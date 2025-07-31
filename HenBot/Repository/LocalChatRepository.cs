@@ -1,4 +1,6 @@
-namespace HenBot;
+using HenBot.Models;
+
+namespace HenBot.Repository;
 
 public static class LocalChatRepository 
 {
@@ -8,5 +10,5 @@ public static class LocalChatRepository
         if (!savedChats.ContainsKey(chatId)) savedChats[chatId] = new LocalChat { Step = 0 };
 
         return savedChats[chatId];
-    }    
+    }
 }

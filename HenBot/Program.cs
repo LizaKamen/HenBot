@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using HenBot.Consts;
+using HenBot.Handlers;
 using Telegram.Bot;
 using Telegram.Bot.Polling;
 using Telegram.Bot.Types.Enums;
@@ -9,12 +10,10 @@ public class Program
 {
     private static async Task Main(string[] args)
     {
-        
-
         var token = Appsettings.BotToken;
         if (token is null)
         {
-            System.Console.WriteLine("Token is null");
+            Console.WriteLine("Token is null");
             throw new Exception("Token is null");
         }
         var botClient = new TelegramBotClient(token);

@@ -1,6 +1,6 @@
 ﻿using Telegram.Bot.Types;
 
-namespace HenBot;
+namespace HenBot.Helpers;
 
 public static class AlbumInputMediaCreator
 {

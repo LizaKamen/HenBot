@@ -1,7 +1,8 @@
-﻿using Telegram.Bot;
+﻿using HenBot.Repository;
+using Telegram.Bot;
 using Telegram.Bot.Types;
 
-namespace HenBot;
+namespace HenBot.Handlers;
 
 public static class MessageHandler
 {

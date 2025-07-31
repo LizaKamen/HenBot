@@ -1,6 +1,8 @@
-﻿using RestSharp;
+﻿using HenBot.Helpers;
+using HenBot.Models;
+using RestSharp;
 
-namespace HenBot;
+namespace HenBot.Services;
 
 public static class GelbooruSourceService
 {
@@ -8,29 +10,32 @@ public static class GelbooruSourceService
 
     public static async Task<List<Post>?> GetPostsAsync(int limit, string tags, int page)
     {
-        var request = new RestRequest("index.php");
+        var request = CreateRequest("post");
         request
-            .AddParameter("page", "dapi")
-            .AddParameter("s", "post")
-            .AddParameter("q", "index")
             .AddParameter("limit", limit)
             .AddParameter("tags", TagsQueryBuilder.BuildTagsQuery(tags))
-            .AddParameter("pid", page)
-            .AddParameter("json", "1");
+            .AddParameter("pid", page);
         var postObject = await _client.GetAsync<PostObject>(request);
         return postObject?.Post;
     }
 
     public static async Task<TagObject> GetTagAsync(string tag)
     {
+        var request = CreateRequest("tag");
+        request.AddParameter("name_pattern", tag);
+        var tagObject = await _client.GetAsync<TagObject>(request);
+        return tagObject;
+    }
+
+    private static RestRequest CreateRequest(string type)
+    {
         var request = new RestRequest("index.php");
         request
             .AddParameter("page", "dapi")
-            .AddParameter("s", "tag")
+            .AddParameter("s", type)
             .AddParameter("q", "index")
-            .AddParameter("name_pattern", tag)
             .AddParameter("json", "1");
-        var tagObject = await _client.GetAsync<TagObject>(request);
-        return tagObject;
+        return request;
+
     }
 }

@@ -1,6 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using HenBot.Models;
+using Microsoft.EntityFrameworkCore;
 
-namespace HenBot;
+namespace HenBot.Repository;
 
 public static class ChatRepository
 {

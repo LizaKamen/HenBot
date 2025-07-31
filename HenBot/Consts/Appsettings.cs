@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Configuration;
 
-namespace HenBot;
+namespace HenBot.Consts;
 
 public class Appsettings
 {
@@ -8,7 +8,7 @@ public class Appsettings
     public static string ApiKey { get { return _config["tokens:api_key"]; } }
     public static string UserId { get { return _config["tokens:user_id"]; } }
 
-    private static IConfiguration _config = new ConfigurationBuilder()
+    private static readonly IConfiguration _config = new ConfigurationBuilder()
             .SetBasePath(Directory.GetCurrentDirectory())
             .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
             .Build();

@@ -1,7 +1,8 @@
+using HenBot.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
-namespace HenBot;
+namespace HenBot.Repository;
 
 public class RepositoryContext : DbContext
 {
