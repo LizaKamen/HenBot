@@ -17,7 +17,22 @@ public static class CallbackHandler
         if (savedChat.IsAyaya)
         {
             savedChat.LastTag = update.CallbackQuery.Data;
+            await botClient.DeleteMessage(chatId, update.CallbackQuery.Message.Id, cancellationToken );
             await AyayaHandler.DoAyaya(botClient, savedChat.LastTag, chatId, savedChat, cancellationToken);
+        }
+        else if(savedChat.IsAyayaed)
+        {
+            savedChat.Page++;
+            await botClient.DeleteMessage(chatId, update.CallbackQuery.Message.Id, cancellationToken);
+            switch (update.CallbackQuery.Data)
+            {
+                case "next":
+                    await AyayaHandler.DoAyaya(botClient, savedChat.LastTag, chatId, savedChat, cancellationToken);
+                    break;
+                case "new":
+                    await AyayaHandler.HandleAyaya(botClient, chatId, cancellationToken);
+                    break;
+            }
         }
     }
 }

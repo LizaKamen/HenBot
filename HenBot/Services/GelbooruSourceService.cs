@@ -36,6 +36,5 @@ public static class GelbooruSourceService
             .AddParameter("q", "index")
             .AddParameter("json", "1");
         return request;
-
     }
 }

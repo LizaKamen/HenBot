@@ -25,7 +25,7 @@ public static class AyayaHandler
             await botClient.SendMessage(
                 chatId,
                 "Choose tag",
-                replyMarkup: CreateInlineKeyboard(savedChat),
+                replyMarkup: CreateTagsInlineKeyboard(savedChat),
                 cancellationToken: cancellationToken);
     }
 
@@ -46,15 +46,29 @@ public static class AyayaHandler
         await botClient.SendMediaGroup(chatId, media, cancellationToken: cancellationToken);
         savedChat.IsAyaya = false;
         savedChat.IsAyayaed = true;
+        await botClient.SendMessage(chatId, $"Get next posts or choose other tags?", replyMarkup: CreateNextInlineKeyboard(chat), cancellationToken: cancellationToken);
     }
 
-    private static InlineKeyboardMarkup CreateInlineKeyboard(Chat savedChat)
+    private static InlineKeyboardMarkup CreateTagsInlineKeyboard(Chat savedChat)
     {
         var length = savedChat.SavedTags.Count >= 10 ? 10 : savedChat.SavedTags.Count;
         var inlineKeyboard = new List<InlineKeyboardButton[]>(length);
         for (var i = 0; i < length; i++)
             inlineKeyboard.Add(new[]
                 { InlineKeyboardButton.WithCallbackData(savedChat.SavedTags[i].Query, savedChat.SavedTags[i].Query) });
+
+        return inlineKeyboard.ToArray();
+    }
+
+    private static InlineKeyboardMarkup CreateNextInlineKeyboard(Chat savedChat)
+    {
+        var inlineKeyboard = new List<InlineKeyboardButton[]>
+        {
+            new[]
+                { InlineKeyboardButton.WithCallbackData("next") },
+            new[]
+                { InlineKeyboardButton.WithCallbackData("new") }
+        };
 
         return inlineKeyboard.ToArray();
     }
