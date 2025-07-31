@@ -13,9 +13,15 @@ public class RepositoryContext : DbContext
 
     public RepositoryContext()
     {
-        var folder = Environment.SpecialFolder.LocalApplicationData;
+        var isDocker = Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER") == "true";
+
+        DbPath = isDocker
+            ? "/app/data/henbot.db"
+            : Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "henbot.db");
+
+        /*var folder = Environment.SpecialFolder.LocalApplicationData;
         var path = Environment.GetFolderPath(folder);
-        DbPath = Path.Join(path, "henbot.db");
+        DbPath = Path.Join(path, "henbot.db");*/
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) 

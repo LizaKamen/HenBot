@@ -1,5 +1,7 @@
 ﻿using HenBot.Consts;
 using HenBot.Handlers;
+using HenBot.Repository;
+using Microsoft.EntityFrameworkCore;
 using Telegram.Bot;
 using Telegram.Bot.Polling;
 using Telegram.Bot.Types.Enums;
@@ -10,6 +12,9 @@ public class Program
 {
     private static async Task Main(string[] args)
     {
+        using var dbContext = new RepositoryContext();
+        dbContext.Database.Migrate();
+
         var token = Appsettings.BotToken;
         if (token is null)
         {
