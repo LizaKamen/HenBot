@@ -32,6 +32,9 @@ public static class CallbackHandler
                 case "new":
                     await AyayaHandler.HandleAyaya(botClient, chatId, cancellationToken);
                     break;
+                case "save this tag":
+                    ChatRepository.AddTag(chatId, savedChat.LastTag);
+                    break;
             }
         }
     }

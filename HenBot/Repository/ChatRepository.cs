@@ -30,4 +30,13 @@ public static class ChatRepository
         chatFromDb.SavedTags = chatToSave.SavedTags;
         db.SaveChanges();
     }
+
+    public static void AddTag(long chatId, string tags)
+    {
+        using var db = new RepositoryContext();
+        var chatFromDb = GetChatFromDb(chatId);
+        db.SavedChats.Update(chatFromDb);
+        chatFromDb.SavedTags.Add(new TagQuery() { Id = new Guid(), SavedChatId = chatId, Query = tags });
+        db.SaveChanges();
+    }
 }

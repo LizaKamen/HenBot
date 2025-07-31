@@ -45,7 +45,9 @@ public static class MessageHandler
                     savedChat.Page++;
                     await AyayaHandler.DoAyaya(botClient, savedChat.LastTag, chatId, savedChat, cancellationToken);
                 }
-
+                break;
+            case "/getRandomTag":
+                await AyayaHandler.GetPostOfRandomTag(botClient, chatId, cancellationToken);
                 break;
             default:
                 return;

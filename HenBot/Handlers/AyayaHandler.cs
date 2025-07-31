@@ -43,10 +43,22 @@ public static class AyayaHandler
         var urls = UrlExtractor.ExtractUrlsFromPostsList(postsList);
         Console.WriteLine($"Chat: {chatId}, urls about to send to the chat: {JsonSerializer.Serialize(urls)}");
         var media = AlbumInputMediaCreator.CreateAlbumInputMedia(urls);
+        await botClient.SendMessage(chatId, $"Posts for {tags} tags", cancellationToken: cancellationToken);
         await botClient.SendMediaGroup(chatId, media, cancellationToken: cancellationToken);
         savedChat.IsAyaya = false;
         savedChat.IsAyayaed = true;
         await botClient.SendMessage(chatId, $"Get next posts or choose other tags?", replyMarkup: CreateNextInlineKeyboard(chat), cancellationToken: cancellationToken);
+    }
+
+    public static async Task GetPostOfRandomTag(ITelegramBotClient botClient, long chatId, CancellationToken cancellationToken)
+    {
+        var postsList =
+            await GelbooruSourceService.GetPostsAsync(10, "", 1);
+        var tags = postsList[Random.Shared.Next(10)].Tags.Split(' ');
+        var tag = tags[Random.Shared.Next(tags.Length - 1)];
+        var chatLocal = LocalChatRepository.GetLocalChat(chatId);
+        chatLocal.LastTag = tag;
+        await DoAyaya(botClient, tag, chatId, chatLocal, cancellationToken);
     }
 
     private static InlineKeyboardMarkup CreateTagsInlineKeyboard(Chat savedChat)
@@ -67,7 +79,9 @@ public static class AyayaHandler
             new[]
                 { InlineKeyboardButton.WithCallbackData("next") },
             new[]
-                { InlineKeyboardButton.WithCallbackData("new") }
+                { InlineKeyboardButton.WithCallbackData("new") },
+            new[]
+                { InlineKeyboardButton.WithCallbackData("save this tag")}
         };
 
         return inlineKeyboard.ToArray();
